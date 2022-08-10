@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 08:05:08 by lide              #+#    #+#             */
-/*   Updated: 2022/08/09 18:56:17 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/10 17:40:41 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,21 @@ t_philo	*value_copy(t_philo *value, int i)
 	t_philo	*new;
 
 	new = (t_philo *)malloc(sizeof(t_philo));
+	if (!new)
+		return (NULL);
 	*new = *value;
 	new->nb = i;
 	return (new);
+}
+
+int	error_value(t_philo *value, int i, pthread_t *philo)
+{
+	int	j;
+
+	*value->check = 1;
+	j = -1;
+	while (++j < i)
+		if (pthread_join(philo[j], NULL))
+			return (free_create(1, "Error: pthread_join\n", philo, value));
+	return (free_create(1, "Error: malloc value_copy\n", philo, value));
 }
