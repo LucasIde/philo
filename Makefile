@@ -6,7 +6,7 @@
 #    By: lide <lide@student.s19.be>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/01 15:04:58 by lide              #+#    #+#              #
-#    Updated: 2022/08/09 18:10:43 by lide             ###   ########.fr        #
+#    Updated: 2022/08/11 18:04:40 by lide             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ SRCS	=	srcs/philo.c\
 			srcs/utils.c\
 			srcs/value.c\
 			srcs/init.c\
-			srcs/free.c
+			srcs/free.c\
+			srcs/ft_putnbr.c
 
 NAME	=	philo.a
 EXEC	=	philo

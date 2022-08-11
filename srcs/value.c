@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 17:27:10 by lide              #+#    #+#             */
-/*   Updated: 2022/08/10 17:58:14 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/11 17:22:03 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	change_type(int argc, char **argv, t_philo *value)
 	else
 		value->nb_eat = atoi(argv[5]);
 	value->nb = 0;
+	value->time = get_time();
 	if((argc == 6 && value->nb_eat < 0) || value->tot < 1
 		|| value->die < 0 || value->eat < 0 || value->sleep < 0)
 	{
