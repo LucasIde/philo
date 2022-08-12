@@ -6,7 +6,7 @@
 #    By: lide <lide@student.s19.be>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/01 15:04:58 by lide              #+#    #+#              #
-#    Updated: 2022/08/11 18:04:40 by lide             ###   ########.fr        #
+#    Updated: 2022/08/12 19:14:23 by lide             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,13 @@ SRCS	=	srcs/philo.c\
 			srcs/value.c\
 			srcs/init.c\
 			srcs/free.c\
-			srcs/ft_putnbr.c
+			srcs/death_timer.c
 
 NAME	=	philo.a
 EXEC	=	philo
 OBJS	=	${SRCS:.c=.o}
 CC		=	@gcc
-CFLAGS	= -Wall -Wextra -Werror
+CFLAGS	=	-Wall -Wextra -Werror
 
 ${NAME}:	${OBJS}
 			@ar -rc ${NAME} ${OBJS}

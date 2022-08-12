@@ -6,67 +6,13 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 15:28:53 by lide              #+#    #+#             */
-/*   Updated: 2022/08/11 19:35:41 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/12 19:14:25 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void	ft_wait(int time_to_wait)
-{
-	long time;
-	long new_time;
-
-	time = get_time();
-	new_time = get_time();
-	while (new_time - time < time_to_wait)
-	{
-		usleep(100);
-		new_time = get_time();
-	}
-}
-
-void	death_timer(t_philo *value)
-{
-	struct timeval	time;
-	struct timeval	new_time;
-	long timer;
-
-	gettimeofday(&time, NULL);
-	while (*value->check == 0)
-	{
-		usleep(10);
-		gettimeofday(&new_time, NULL);
-		timer = (new_time.tv_sec - time.tv_sec) * 1000;
-		timer += (new_time.tv_usec - time.tv_usec) / 1000;
-		if (timer >= value->die)/*&& value->check == 0*/
-		{
-			*value->check = 1;
-			gettimeofday(&time, NULL);
-			timer = (time.tv_sec * 1000) + (time.tv_usec / 1000) - value->time;
-			pthread_mutex_lock(value->wright);
-			printf("%ld \033[0;91m%d died\n\033[0m", timer, value->nb + 1);
-			pthread_mutex_unlock(value->wright);
-		}
-		if (*value->eat == 1 && *value->check == 0)
-		{
-			gettimeofday(&time, NULL);
-			*value->eat = 0;
-		}
-	}
-}
-
-long	get_time(void)
-{
-	struct timeval	time;
-	long	t;
-
-	gettimeofday(&time, NULL);
-	t = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-	return (t);
-}
-
-int print_action(t_philo *value, int verif)
+int	print_action(t_philo *value, int verif)
 {
 	long	time;
 
@@ -82,9 +28,33 @@ int print_action(t_philo *value, int verif)
 			printf("%ld "SLEEP, time, value->nb + 1);
 		if (verif == 4)
 			printf("%ld "THINK, time, value->nb + 1);
+		if (verif == 5 && *value->check == 0)
+		{
+			*value->check = 1;
+			printf("%ld "DIE, time, value->nb + 1);
+		}
 		pthread_mutex_unlock(value->wright);
 	}
 	return (0);
+}
+
+void	routine(t_philo *value, int j)
+{
+	while (!(*value->check) && value->nb_eat != 0 && value->tot > 1)
+	{
+		pthread_mutex_lock(&value->mt[value->nb]);
+		pthread_mutex_lock(&value->mt[j]);
+		print_action(value, 1);
+		print_action(value, 1);
+		*value->eat = 1;
+		print_action(value, 2);
+		ft_wait(value->t_eat, value, 1);
+		pthread_mutex_unlock(&value->mt[value->nb]);
+		pthread_mutex_unlock(&value->mt[j]);
+		print_action(value, 3);
+		ft_wait(value->sleep, value, 0);
+		print_action(value, 4);
+	}
 }
 
 void	life(t_philo *value)
@@ -96,39 +66,29 @@ void	life(t_philo *value)
 	eat = 0;
 	value->eat = &eat;
 	if (*value->check == 0)
+	{
 		if (pthread_create(&death[0], NULL, (void *)death_timer, (void *)value))
+		{
 			*value->check = 1;
+			printf("Error: pthread_create\n");
+		}
+	}
 	if (value->nb == 0)
 		j = value->tot - 1;
 	else
 		j = value->nb - 1;
 	if (value->nb % 2 != 0)
 		usleep(50);
-	while (!(*value->check) && value->nb_eat != 0 && value->tot > 1)
-	{
-		pthread_mutex_lock(&value->mt[value->nb]);
-		pthread_mutex_lock(&value->mt[j]);
-		print_action(value, 1);
-		print_action(value, 1);
-		*value->eat = 1;
-		print_action(value, 2);
-		ft_wait(value->t_eat);
-		pthread_mutex_unlock(&value->mt[value->nb]);
-		pthread_mutex_unlock(&value->mt[j]);
-		print_action(value, 3);
-		ft_wait(value->sleep);
-		print_action(value, 4);
-		value->nb_eat -= 1;
-	}
+	routine(value, j);
 	pthread_join(death[0], NULL);
-	free(value);//doit destoy le mutex a la mort et free check
+	free(value);
 }
 
 int	create_philo(t_philo *value)
 {
 	pthread_t	*philo;
-	int	i;
-	t_philo	*new;
+	t_philo		*new;
+	int			i;
 
 	if (init_mutex(value->tot, value))
 		return (write_error("Error: malloc mutex\n"));
@@ -138,7 +98,7 @@ int	create_philo(t_philo *value)
 	i = -1;
 	while (++i < value->tot)
 	{
-		new = value_copy(value, i);//en cas de crash renvoyer dans une fonction qui fera un join
+		new = value_copy(value, i);
 		if (!new)
 			return (error_value(value, i, philo));
 		if (pthread_create(&philo[i], NULL, (void *)&life, (void *)new))
@@ -151,8 +111,7 @@ int	create_philo(t_philo *value)
 	return (free_create(2, NULL, philo, value));
 }
 
-
-int	main(int argc, char **argv)//doit free une seule fois value check
+int	main(int argc, char **argv)
 {
 	t_philo	value;
 
@@ -166,42 +125,3 @@ int	main(int argc, char **argv)//doit free une seule fois value check
 		return (write_error("error: creation of pthread\n"));
 	return (0);
 }
-
-	// while (!(*value->check) && value->nb_eat != 0)
-	// {
-	// 	// printf("SLEEP = %d\n", value->sleep);
-	// 	pthread_mutex_lock(&value->mt[value->nb]);
-	// 	pthread_mutex_lock(&value->mt[j]);
-	// 	time = get_time() - value->time;
-	// 	pthread_mutex_lock(value->wright);
-	// 	printf("%ld %d has taken a fork\n", time, value->nb + 1);
-	// 	pthread_mutex_unlock(value->wright);
-	// 	*value->eat = 1;
-	// 	time = get_time() - value->time;
-	// 	pthread_mutex_lock(value->wright);
-	// 	printf("%ld %d is eating\n", time, value->nb + 1);
-	// 	pthread_mutex_unlock(value->wright);
-	// 	usleep(value->t_eat);
-	// 	pthread_mutex_unlock(&value->mt[value->nb]);
-	// 	pthread_mutex_unlock(&value->mt[j]);
-	// 	time = get_time() - value->time;
-	// 	printf("%ld %d is sleeping\n", time, value->nb + 1);
-	// 	usleep(value->sleep);
-	// 	time = get_time() - value->time;
-	// 	printf("%ld %d is thinking\n", time, value->nb + 1);
-	// 	value->nb_eat -= 1;
-	// }
-
-		// if (ft_putnbr(time))
-		// {
-		// 	*value->check = 1;
-		// 	pthread_mutex_unlock(value->wright);
-		// 	return(write_error("Error: malloc ft_putnbr"));
-		// }
-		// if (ft_putnbr((long)(value->nb + 1)))
-		// {
-		// 	*value->check = 1;
-		// 	pthread_mutex_unlock(value->wright);
-		// 	return(write_error("Error: malloc ft_putnbr\n"));
-		// }
-		// write(1, str, len1(str));

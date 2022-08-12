@@ -6,13 +6,13 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 08:05:08 by lide              #+#    #+#             */
-/*   Updated: 2022/08/10 17:40:41 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/12 19:03:48 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-pthread_t *init_philo(int tot)
+pthread_t	*init_philo(int tot)
 {
 	pthread_t	*th;
 
@@ -22,27 +22,38 @@ pthread_t *init_philo(int tot)
 	return (th);
 }
 
+int	free_error_mutex(pthread_mutex_t *wright, pthread_mutex_t *wait, int verif)
+{
+	free(wright);
+	if (verif == 1)
+		free(wait);
+	return (1);
+}
+
 int	init_mutex(int tot, t_philo *value)
 {
 	pthread_mutex_t	*mt;
 	pthread_mutex_t	*wright;
-	int	i;
+	pthread_mutex_t	*wait;
+	int				i;
 
 	wright = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 	if (!wright)
-		return(1);
+		return (1);
+	wait = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+	if (!wait)
+		return (free_error_mutex(wright, wait, 0));
 	mt = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * tot);
 	if (!mt)
-	{
-		free(wright);
-		return(1);
-	}
+		return (free_error_mutex(wright, wait, 1));
 	i = -1;
 	while (++i < tot)
 		pthread_mutex_init(&mt[i], NULL);
 	pthread_mutex_init(wright, NULL);
+	pthread_mutex_init(wait, NULL);
 	value->mt = mt;
 	value->wright = wright;
+	value->wait = wait;
 	return (0);
 }
 
@@ -56,16 +67,4 @@ t_philo	*value_copy(t_philo *value, int i)
 	*new = *value;
 	new->nb = i;
 	return (new);
-}
-
-int	error_value(t_philo *value, int i, pthread_t *philo)
-{
-	int	j;
-
-	*value->check = 1;
-	j = -1;
-	while (++j < i)
-		if (pthread_join(philo[j], NULL))
-			return (free_create(1, "Error: pthread_join\n", philo, value));
-	return (free_create(1, "Error: malloc value_copy\n", philo, value));
 }

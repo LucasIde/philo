@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 08:04:46 by lide              #+#    #+#             */
-/*   Updated: 2022/08/11 15:53:09 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/12 19:05:09 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,14 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (atoi2(str, i, x));
+}
+
+long	get_time(void)
+{
+	struct timeval	time;
+	long			t;
+
+	gettimeofday(&time, NULL);
+	t = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (t);
 }
