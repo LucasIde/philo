@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 17:52:58 by lide              #+#    #+#             */
-/*   Updated: 2022/08/12 19:03:44 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 17:56:08 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,11 @@ int	free_create(int verif, char *str, pthread_t *philo, t_philo *value)
 		pthread_mutex_destroy(&value->mt[i]);
 	pthread_mutex_destroy(value->wright);
 	pthread_mutex_destroy(value->wait);
+	pthread_mutex_destroy(value->dead);
 	free(value->mt);
 	free(value->wright);
 	free(value->wait);
+	free(value->dead);
 	free(value->check);
 	free(value->end);
 	if (verif)
@@ -38,7 +40,7 @@ int	error_value(t_philo *value, int i, pthread_t *philo)
 {
 	int	j;
 
-	*value->check = 1;
+	change_check(value);
 	j = -1;
 	while (++j < i)
 		if (pthread_join(philo[j], NULL))

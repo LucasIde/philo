@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 19:00:24 by lide              #+#    #+#             */
-/*   Updated: 2022/08/12 19:09:33 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 17:56:11 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 void	check_eat(t_philo *value)
 {
-	value->nb_eat -= 1;
+	if (value->nb_eat > 0)//changement pour 0 dans le nbr de eat
+		value->nb_eat -= 1;
 	pthread_mutex_lock(value->wait);
 	if (value->nb_eat == 0)
 		*value->end -= 1;
 	if (*value->end == 0)
-		*value->check = 1;
+		change_check(value);
 	pthread_mutex_unlock(value->wait);
 }
 

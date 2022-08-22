@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 15:29:30 by lide              #+#    #+#             */
-/*   Updated: 2022/08/12 19:13:31 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 18:01:35 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_philo
 	pthread_mutex_t	*wait;
 	pthread_mutex_t	*mt;
 	pthread_mutex_t	*wright;
+	pthread_mutex_t	*dead;
 }	t_philo;
 
 int			check_value(int argc, char **argv, t_philo *value);
@@ -56,5 +57,6 @@ int			ft_putnbr(long n);
 int			print_action(t_philo *value, int verif);
 void		death_timer(t_philo *value);
 void		ft_wait(int time_to_wait, t_philo *value, int verif);
+void		change_check(t_philo *value);
 
 #endif

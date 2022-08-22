@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 15:28:53 by lide              #+#    #+#             */
-/*   Updated: 2022/08/12 19:14:25 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 18:00:40 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	print_action(t_philo *value, int verif)
 			printf("%ld "THINK, time, value->nb + 1);
 		if (verif == 5 && *value->check == 0)
 		{
-			*value->check = 1;
+			change_check(value);
 			printf("%ld "DIE, time, value->nb + 1);
 		}
 		pthread_mutex_unlock(value->wright);
@@ -69,7 +69,7 @@ void	life(t_philo *value)
 	{
 		if (pthread_create(&death[0], NULL, (void *)death_timer, (void *)value))
 		{
-			*value->check = 1;
+			change_check(value);
 			printf("Error: pthread_create\n");
 		}
 	}
@@ -91,7 +91,7 @@ int	create_philo(t_philo *value)
 	int			i;
 
 	if (init_mutex(value->tot, value))
-		return (write_error("Error: malloc mutex\n"));
+		return (write_error("Error: malloc mutex\n"));//doit free value
 	philo = init_philo(value->tot);
 	if (!philo)
 		return (free_create(0, "Error: malloc philo\n", philo, value));
