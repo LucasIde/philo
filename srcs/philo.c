@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 15:28:53 by lide              #+#    #+#             */
-/*   Updated: 2022/08/22 18:00:40 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 18:29:56 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	create_philo(t_philo *value)
 	int			i;
 
 	if (init_mutex(value->tot, value))
-		return (write_error("Error: malloc mutex\n"));//doit free value
+		return (free_value(value));//doit free value
 	philo = init_philo(value->tot);
 	if (!philo)
 		return (free_create(0, "Error: malloc philo\n", philo, value));
@@ -122,6 +122,6 @@ int	main(int argc, char **argv)
 	if (check_value(argc, argv, &value))
 		return (1);
 	if (create_philo(&value))
-		return (write_error("error: creation of pthread\n"));
+		return (1);
 	return (0);
 }

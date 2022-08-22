@@ -6,11 +6,18 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/09 17:52:58 by lide              #+#    #+#             */
-/*   Updated: 2022/08/22 17:56:08 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/22 18:28:32 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+int free_value(t_philo *value)
+{
+	free(value->check);
+	free(value->end);
+	return (write_error("Error: malloc mutex\n"));
+}
 
 int	free_create(int verif, char *str, pthread_t *philo, t_philo *value)
 {
