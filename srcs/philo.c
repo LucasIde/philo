@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 15:28:53 by lide              #+#    #+#             */
-/*   Updated: 2022/08/22 18:29:56 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/23 16:16:10 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ int	print_action(t_philo *value, int verif)
 {
 	long	time;
 
+	pthread_mutex_lock(value->wright);
 	if (*value->check == 0)
 	{
-		pthread_mutex_lock(value->wright);
 		time = get_time() - value->time;
 		if (verif == 1)
 			printf("%ld "FORK, time, value->nb + 1);
@@ -33,8 +33,8 @@ int	print_action(t_philo *value, int verif)
 			change_check(value);
 			printf("%ld "DIE, time, value->nb + 1);
 		}
-		pthread_mutex_unlock(value->wright);
 	}
+	pthread_mutex_unlock(value->wright);
 	return (0);
 }
 
@@ -91,7 +91,7 @@ int	create_philo(t_philo *value)
 	int			i;
 
 	if (init_mutex(value->tot, value))
-		return (free_value(value));//doit free value
+		return (free_value(value, "Error: malloc mutex\n"));
 	philo = init_philo(value->tot);
 	if (!philo)
 		return (free_create(0, "Error: malloc philo\n", philo, value));
@@ -121,6 +121,12 @@ int	main(int argc, char **argv)
 		return (write_error("too much arguments\n"));
 	if (check_value(argc, argv, &value))
 		return (1);
+	if (value.nb_eat == 0)
+	{
+		free(value.check);
+		free(value.end);
+		return (0);
+	}
 	if (create_philo(&value))
 		return (1);
 	return (0);

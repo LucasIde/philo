@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 19:00:24 by lide              #+#    #+#             */
-/*   Updated: 2022/08/22 17:56:11 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/23 15:39:33 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 void	check_eat(t_philo *value)
 {
-	if (value->nb_eat > 0)//changement pour 0 dans le nbr de eat
-		value->nb_eat -= 1;
+	value->nb_eat -= 1;
 	pthread_mutex_lock(value->wait);
 	if (value->nb_eat == 0)
 		*value->end -= 1;
@@ -54,9 +53,7 @@ void	death_timer(t_philo *value)
 		timer = (new_time.tv_sec - time.tv_sec) * 1000;
 		timer += (new_time.tv_usec - time.tv_usec) / 1000;
 		if (timer >= value->die && *value->check == 0)
-		{
 			print_action(value, 5);
-		}
 		if (*value->eat == 1 && *value->check == 0)
 		{
 			gettimeofday(&time, NULL);

@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 17:27:10 by lide              #+#    #+#             */
-/*   Updated: 2022/08/12 18:55:47 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/23 15:50:18 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,10 @@ int	malloc_value(int argc, char **argv, t_philo *value)
 		return (write_error("error malloc check\n"));
 	end = (int *)malloc(sizeof(int));
 	if (!end)
+	{
+		free(check);
 		return (write_error("error malloc end\n"));
+	}
 	*check = 0;
 	value->check = check;
 	change_type(argc, argv, value);
@@ -44,10 +47,7 @@ int	malloc_value(int argc, char **argv, t_philo *value)
 	value->time = get_time();
 	if ((argc == 6 && value->nb_eat < 0) || value->tot < 1
 		|| value->die < 0 || value->eat < 0 || value->sleep < 0)
-	{
-		free(check);
-		return (write_error("value are too small\n"));
-	}
+		return (free_value(value, "value are too small\n"));
 	return (0);
 }
 
