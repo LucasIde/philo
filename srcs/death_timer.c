@@ -6,7 +6,7 @@
 /*   By: lide <lide@student.s19.be>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/12 19:00:24 by lide              #+#    #+#             */
-/*   Updated: 2022/08/23 15:39:33 by lide             ###   ########.fr       */
+/*   Updated: 2022/08/25 13:26:46 by lide             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void	ft_wait(int time_to_wait, t_philo *value, int verif)
 		check_eat(value);
 	while (new_time - time < time_to_wait)
 	{
+		if (*value->check == 1)
+			break ;
 		usleep(100);
 		new_time = get_time();
 	}
